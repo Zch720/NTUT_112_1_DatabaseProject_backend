@@ -1,3 +1,6 @@
+using Elecookies;
+using Elecookies.Database;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,6 +12,8 @@ builder.Services.AddCors(options => {
             .AllowAnyMethod();
     });
 });
+
+builder.Services.AddSingleton<ElecookiesDbContext, RdbContext>( );
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
