@@ -1,4 +1,6 @@
 ﻿using Elecookies;
+using Elecookies.Controllers;
+using Elecookies.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Tests;
@@ -10,6 +12,10 @@ namespace Test.Context.InMemory {
 
         public override ElecookiesDbContext DbContext { get; }
 
+        public override AccountRepository AccountRepository { get; }
+
+        public override AccountController AccountController { get; }
+
         public InMemoryTestContext() {
             options = new DbContextOptionsBuilder<InMemoryDbContext>()
                 .UseInMemoryDatabase("InMemoryTest")
@@ -17,6 +23,9 @@ namespace Test.Context.InMemory {
                 .Options;
 
             DbContext = new InMemoryDbContext(options);
+
+            AccountRepository = new AccountRepository(DbContext);
+            AccountController = new AccountController(AccountRepository);
         }
     }
 }

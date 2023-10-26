@@ -1,4 +1,6 @@
-﻿using Test.Context.Rdb;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Test.Context.Rdb;
+using Tests.Controller;
 
 namespace Tests {
     public class RdbTesting {
@@ -6,6 +8,12 @@ namespace Tests {
 
         static RdbTesting() {
             context = new TestRdbTestContext();
+        }
+
+        [TestClass]
+        public class AccountControllerTesting : AccountControllerTest {
+            public AccountControllerTesting() : base(context) {
+            }
         }
     }
 }
