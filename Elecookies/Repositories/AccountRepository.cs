@@ -10,7 +10,11 @@ namespace Elecookies.Repositories {
         }
 
         public void Save(Account value) {
-            dbContext.Accounts.Add(value);
+            if (FindById(value.Id) == null) {
+                dbContext.Accounts.Add(value);
+            } else {
+                dbContext.Accounts.Update(value);
+            }
             dbContext.SaveChanges();
         }
 
