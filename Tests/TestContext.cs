@@ -8,8 +8,11 @@ namespace Tests {
         public abstract ElecookiesDbContext DbContext { get; }
 
         public abstract AccountRepository AccountRepository { get; }
+        public abstract ShopRepository ShopRepository { get; }
 
         public abstract AccountController AccountController { get; }
+        public abstract ShopController ShopController { get; }
+
 
         public string CreateNewAccount(string loginId, string password, string email) {
             CreateAccountInput input = new CreateAccountInput();
