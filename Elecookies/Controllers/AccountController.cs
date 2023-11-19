@@ -4,6 +4,7 @@ using Elecookies.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Elecookies.Controllers {
+    [Route("api/user")]
     [ApiController]
     public class AccountController {
         private AccountRepository accountRepository;
@@ -12,6 +13,8 @@ namespace Elecookies.Controllers {
             this.accountRepository = accountRepository;
         }
 
+        [Route("create")]
+        [HttpPost]
         public string CreateAccount(CreateAccountInput input) {
             if (accountRepository.All().Find(account => account.LoginId == input.LoginId) != null) {
                 return "";
@@ -28,6 +31,8 @@ namespace Elecookies.Controllers {
             return account.Id.ToString();
         }
 
+        [Route("delete")]
+        [HttpPost]
         public bool DeleteAccount(DeleteAccountInput input) {
             Account? account = accountRepository.FindById(Guid.Parse(input.UserId));
             if (account != null && account.Password == input.Password) {
@@ -37,6 +42,8 @@ namespace Elecookies.Controllers {
             return false;
         }
 
+        [Route("edit-name")]
+        [HttpPost]
         public void EditAccountName(EditAccountNameInput input) {
             Account? account = accountRepository.FindById(Guid.Parse(input.UserId));
             if (account != null) {
@@ -45,6 +52,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("edit-password")]
+        [HttpPost]
         public void EditAccountPassword(EditAccountPasswordInput input) {
             Account? account = accountRepository.FindById(Guid.Parse(input.UserId));
             if (account != null && account.Password == input.Password) {
@@ -53,6 +62,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("edit-email")]
+        [HttpPost]
         public void EditAccountEmail(EditAccountEmailInput input) {
             Account? account = accountRepository.FindById(Guid.Parse(input.UserId));
             if (account != null) {
@@ -61,6 +72,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("edit-address")]
+        [HttpPost]
         public void EditAccountAddress(EditAccountAddressInput input) {
             Account? account = accountRepository.FindById(Guid.Parse(input.UserId));
             if (account != null){
@@ -69,5 +82,22 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("signin")]
+        [HttpPost]
+        public string Login(LoginInput input) {
+            Account? account = accountRepository.All().Find(account => {
+                return account.LoginId == input.UserAccount && account.Password == input.Password;
+            });
+            if (account == null) {
+                account = accountRepository.All().Find(account => {
+                    return account.Email == input.UserAccount && account.Password == input.Password;
+                });
+            }
+
+            if (account != null) {
+                return account.Id.ToString();
+            }
+            return "";
+        }
     }
 }
