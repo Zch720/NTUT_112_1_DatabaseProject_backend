@@ -24,5 +24,17 @@ namespace Tests {
 
             return AccountController.CreateAccount(input);
         }
+
+        /*
+        public string CreateNewShop() {
+            CreateShopInput input = new CreateShopInput();
+            input.Name = "shopName";
+            input.Address = "address";
+            input.Email = "email@gmail.com";
+            input.PhoneNumber = "phoneNumber";
+            input.Description = "description";
+
+            return ShopController.CreateShop(input);
+        }*/
     }
 }
