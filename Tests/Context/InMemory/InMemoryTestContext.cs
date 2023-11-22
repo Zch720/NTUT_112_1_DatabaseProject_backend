@@ -13,8 +13,10 @@ namespace Test.Context.InMemory {
         public override ElecookiesDbContext DbContext { get; }
 
         public override AccountRepository AccountRepository { get; }
+        public override ShopRepository ShopRepository { get; }
 
         public override AccountController AccountController { get; }
+        public override ShopController ShopController { get; }
 
         public InMemoryTestContext() {
             options = new DbContextOptionsBuilder<InMemoryDbContext>()
@@ -25,7 +27,10 @@ namespace Test.Context.InMemory {
             DbContext = new InMemoryDbContext(options);
 
             AccountRepository = new AccountRepository(DbContext);
+            ShopRepository = new ShopRepository(DbContext);
+
             AccountController = new AccountController(AccountRepository);
+            ShopController = new ShopController(ShopRepository);
         }
     }
 }

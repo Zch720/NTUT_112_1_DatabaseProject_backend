@@ -15,5 +15,11 @@ namespace Tests {
             public AccountControllerTesting() : base(context) {
             }
         }
+
+        [TestClass]
+        public class ShopControllerTesting : ShopControllerTest {
+            public ShopControllerTesting() : base(context) {
+            }
+        }
     }
 }

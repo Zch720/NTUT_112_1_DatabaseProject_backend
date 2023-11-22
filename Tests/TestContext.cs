@@ -8,8 +8,11 @@ namespace Tests {
         public abstract ElecookiesDbContext DbContext { get; }
 
         public abstract AccountRepository AccountRepository { get; }
+        public abstract ShopRepository ShopRepository { get; }
 
         public abstract AccountController AccountController { get; }
+        public abstract ShopController ShopController { get; }
+
 
         public string CreateNewAccount(string loginId, string password, string email) {
             CreateAccountInput input = new CreateAccountInput();
@@ -21,5 +24,17 @@ namespace Tests {
 
             return AccountController.CreateAccount(input);
         }
+
+        /*
+        public string CreateNewShop() {
+            CreateShopInput input = new CreateShopInput();
+            input.Name = "shopName";
+            input.Address = "address";
+            input.Email = "email@gmail.com";
+            input.PhoneNumber = "phoneNumber";
+            input.Description = "description";
+
+            return ShopController.CreateShop(input);
+        }*/
     }
 }

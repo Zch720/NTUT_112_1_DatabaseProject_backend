@@ -9,14 +9,19 @@ namespace Test.Context.Rdb {
         public override ElecookiesDbContext DbContext { get; }
 
         public override AccountRepository AccountRepository { get; }
+        public override ShopRepository ShopRepository { get; }
 
         public override AccountController AccountController { get; }
+        public override ShopController ShopController { get; }
 
         public TestRdbTestContext() {
             DbContext = new TestRdbDbContext();
 
             AccountRepository = new AccountRepository(DbContext);
+            ShopRepository = new ShopRepository(DbContext);
+
             AccountController = new AccountController(AccountRepository);
+            ShopController = new ShopController(ShopRepository);
         }
     }
 }
