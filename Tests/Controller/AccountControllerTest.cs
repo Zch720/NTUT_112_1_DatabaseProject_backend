@@ -165,5 +165,31 @@ namespace Tests.Controller {
 
             Assert.AreEqual("NewAddress", context.AccountRepository.FindById(Guid.Parse(userId)).Address);
         }
+
+        [TestMethod]
+        public void AccountLoginWithLoginId() {
+            string userId = context.CreateNewAccount("test0123", "testpassword", "test@gmail.com");
+            LoginInput input = new LoginInput();
+            input.UserAccount = "test0123";
+            input.Password = "testpassword";
+
+            string result = context.AccountController.Login(input);
+
+            Assert.AreNotEqual("", result);
+            Assert.AreEqual(userId, result);
+        }
+
+        [TestMethod]
+        public void AccountLoginWithEmail() {
+            string userId = context.CreateNewAccount("test0123", "testpassword", "test@gmail.com");
+            LoginInput input = new LoginInput();
+            input.UserAccount = "test@gmail.com";
+            input.Password = "testpassword";
+
+            string result = context.AccountController.Login(input);
+
+            Assert.AreNotEqual("", result);
+            Assert.AreEqual(userId, result);
+        }
     }
 }
