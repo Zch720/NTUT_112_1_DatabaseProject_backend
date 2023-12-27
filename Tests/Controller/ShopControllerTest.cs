@@ -1,5 +1,6 @@
 ﻿using Elecookies.Entities;
 using Elecookies.ReadModels;
+using Elecookies.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests.Controller {
@@ -30,27 +31,61 @@ namespace Tests.Controller {
             string id = context.ShopController.CreateShop(input);
 
             Assert.IsNotNull(context.ShopRepository.FindById(Guid.Parse(id)));
-            // TODO: Assert Staff
         }
-        
-        /*
+
+        [TestMethod]
+        public void CreateStaff() {
+            string shopId = context.CreateNewShop();
+            CreateStaffInput input = new CreateStaffInput();
+            input.LoginId = "loginId";
+            // Todo: AccountId
+            //input.AccountId = "accountId";
+            input.ShopId = shopId;
+            input.Password = "password";
+            input.Name = "username";
+            input.Email = "email";
+            input.Address = "address";
+
+            string id = context.AccountController.CreateStaff(input);
+
+            Assert.IsNotNull(context.StaffRepository.FindById(Guid.Parse(id)));
+        }
+
+        [TestMethod]
+        public void DeleteStaff() {
+            string staffId = context.CreateNewStaff("LoginId", "Password", "Email");
+
+            DeleteStaffInput input = new DeleteStaffInput();
+            input.Id = staffId;
+            // Todo: AccountId
+            //input.AccountId = userId;
+
+            Assert.IsNotNull(context.StaffRepository.FindById(Guid.Parse(staffId)));
+            bool success = context.AccountController.DeleteStaff(input);
+
+            Assert.IsTrue(success);
+            Assert.IsNull(context.StaffRepository.FindById(Guid.Parse(staffId)));
+        }
+
         [TestMethod]
         public void DeleteShop() {
             string shopId = context.CreateNewShop();
             DeleteShopInput input = new DeleteShopInput();
             input.ShopId = shopId;
-            input.AccountId = userId;
+            // Todo: AccountId
+            //input.AccountId = userId;
             
-            Assert.IsNotNull(context.ShopRepository.FindById(Guid.Parse(id)));
+            Assert.IsNotNull(context.ShopRepository.FindById(Guid.Parse(shopId)));
             bool success = context.ShopController.DeleteShop(input);
 
             Assert.IsTrue(success);
-            Assert.IsNull(context.ShopRepository.FindById(Guid.Parse(id)));
+            Assert.IsNull(context.ShopRepository.FindById(Guid.Parse(shopId)));
         }
 
         [TestMethod]
         public void EditShopName() {
             string id = context.CreateNewShop();
+            // AccountId
             EditShopNameInput input = new EditShopNameInput();
             input.Id = id;
             input.Name = "newName";
@@ -107,6 +142,5 @@ namespace Tests.Controller {
 
             Assert.AreEqual("newDescription", context.ShopRepository.FindById(Guid.Parse(id)).Description);
         }
-        */
     }
 }

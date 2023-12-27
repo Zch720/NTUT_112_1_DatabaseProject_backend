@@ -8,9 +8,11 @@ namespace Elecookies.Controllers {
     [ApiController]
     public class AccountController {
         private AccountRepository accountRepository;
+        private StaffRepository staffRepository;
 
-        public AccountController(AccountRepository accountRepository) {
+        public AccountController(AccountRepository accountRepository, StaffRepository staffRepository) {
             this.accountRepository = accountRepository;
+            this.staffRepository = staffRepository;
         }
 
         [Route("create")]
@@ -98,6 +100,35 @@ namespace Elecookies.Controllers {
                 return account.Id.ToString();
             }
             return "";
+        }
+
+        [Route ("create-staff")]
+        [HttpPost]
+        public string CreateStaff(CreateStaffInput input) {
+            if (staffRepository.All().Find(staff => staff.LoginId == input.LoginId) != null) {
+                return "";
+            }
+            if (staffRepository.All().Find(staff => staff.Email == input.Email) != null) {
+                return "";
+            }
+
+            Guid id = Guid.NewGuid();
+            Staff staff = new Staff(id, Guid.Parse(input.ShopId), input.LoginId, input.Password, input.Name, input.Email, input.Address);
+            
+            staffRepository.Save(staff);
+
+            return staff.Id.ToString();
+        }
+
+        [Route("delete-staff")]
+        [HttpPost]
+        public bool DeleteStaff(DeleteStaffInput input) {
+            Staff? staff = staffRepository.FindById(Guid.Parse(input.Id));
+            if (staff != null) {
+                staffRepository.Delete(staff.Id);
+                return true;
+            }
+            return false;
         }
     }
 }

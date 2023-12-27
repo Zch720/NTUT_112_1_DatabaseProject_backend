@@ -9,10 +9,10 @@ namespace Tests {
 
         public abstract AccountRepository AccountRepository { get; }
         public abstract ShopRepository ShopRepository { get; }
+        public abstract StaffRepository StaffRepository { get; }
 
         public abstract AccountController AccountController { get; }
         public abstract ShopController ShopController { get; }
-
 
         public string CreateNewAccount(string loginId, string password, string email) {
             CreateAccountInput input = new CreateAccountInput();
@@ -25,7 +25,6 @@ namespace Tests {
             return AccountController.CreateAccount(input);
         }
 
-        /*
         public string CreateNewShop() {
             CreateShopInput input = new CreateShopInput();
             input.Name = "shopName";
@@ -35,6 +34,20 @@ namespace Tests {
             input.Description = "description";
 
             return ShopController.CreateShop(input);
-        }*/
+        }
+
+        public string CreateNewStaff(string loginId, string password, string email) {
+            string shopId = CreateNewShop();
+            CreateStaffInput input = new CreateStaffInput();
+            input.LoginId = loginId;
+            input.ShopId = shopId;
+            input.Password = password;
+            input.Email = email;
+            input.Name = "Name";
+            input.Address = "Address";
+
+            return AccountController.CreateStaff(input);
+        }
+
     }
 }

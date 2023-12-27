@@ -5,6 +5,7 @@ namespace Elecookies.Database {
     public class RdbContext : DbContext, ElecookiesDbContext {
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Shop> Shops { get; set; }
+        public DbSet<Staff> Staffs { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

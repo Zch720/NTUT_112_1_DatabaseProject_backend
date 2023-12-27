@@ -10,6 +10,7 @@ namespace Test.Context.Rdb {
 
         public override AccountRepository AccountRepository { get; }
         public override ShopRepository ShopRepository { get; }
+        public override StaffRepository StaffRepository { get; }
 
         public override AccountController AccountController { get; }
         public override ShopController ShopController { get; }
@@ -19,8 +20,9 @@ namespace Test.Context.Rdb {
 
             AccountRepository = new AccountRepository(DbContext);
             ShopRepository = new ShopRepository(DbContext);
+            StaffRepository = new StaffRepository(DbContext);
 
-            AccountController = new AccountController(AccountRepository);
+            AccountController = new AccountController(AccountRepository, StaffRepository);
             ShopController = new ShopController(ShopRepository);
         }
     }
