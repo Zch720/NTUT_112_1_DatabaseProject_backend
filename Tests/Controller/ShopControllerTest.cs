@@ -1,6 +1,4 @@
-﻿using Elecookies.Entities;
-using Elecookies.ReadModels;
-using Elecookies.Repositories;
+﻿using Elecookies.ReadModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests.Controller {
@@ -14,8 +12,12 @@ namespace Tests.Controller {
         [TestCleanup]
         public void TearDown() {
             var shops = context.ShopRepository.All();
+            var staffs = context.StaffRepository.All();
             foreach (var shop in shops) {
                 context.ShopRepository.Delete(shop.Id);
+            }
+            foreach (var staff in staffs) {
+                context.StaffRepository.Delete(staff.Id);
             }
         }
 

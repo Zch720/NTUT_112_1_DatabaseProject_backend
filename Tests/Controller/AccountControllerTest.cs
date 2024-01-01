@@ -17,8 +17,29 @@ namespace Tests.Controller {
         [TestCleanup]
         public void TearDown() {
             var accounts = context.AccountRepository.All();
+            var staffs = context.StaffRepository.All();
+            var customers = context.CustomerRepository.All();
+            var shops = context.ShopRepository.All();
+            var coupons = context.CouponRepository.All();
+            var hases = context.CustomerRepository.AllHas();
+            
             foreach (var account in accounts) {
                 context.AccountRepository.Delete(account.Id);
+            }
+            foreach (var staff in staffs) {
+                context.StaffRepository.Delete(staff.Id);
+            }
+            foreach (var customer in customers) {
+                context.CustomerRepository.Delete(customer.Id);
+            }
+            foreach (var shop in shops) {
+                context.ShopRepository.Delete(shop.Id);
+            }
+            foreach (var coupon in coupons) {
+                context.CouponRepository.Delete(coupon.Id);
+            }
+            foreach (var has in hases) {
+                context.CustomerRepository.Delete(has.CustomerId, has.CouponId);
             }
         }
 
@@ -190,6 +211,68 @@ namespace Tests.Controller {
 
             Assert.AreNotEqual("", result);
             Assert.AreEqual(userId, result);
+        }
+
+        [TestMethod]
+        public void CreateCustomer() {
+            CreateCustomerInput input = new CreateCustomerInput();
+            input.LoginId = "loginId";
+            input.Password = "password";
+            input.Name = "name";
+            input.Email = "email";
+            input.Address = "address";
+
+            string id = context.AccountController.CreateCustomer(input);
+            
+
+            Assert.IsNotNull(context.CustomerRepository.FindById(Guid.Parse(id)));
+        }
+
+        [TestMethod]
+        public void DelteCustomer() {
+            string customerId = context.CreateNewCustomer("LoginId", "Password", "Email");
+
+            DeleteCustomerInput input = new DeleteCustomerInput();
+            input.UserId = customerId;
+            input.Password = "Password";
+
+            Assert.IsNotNull(context.CustomerRepository.FindById(Guid.Parse(customerId)));
+            bool success = context.AccountController.DeleteCustomer(input);
+
+            Assert.IsTrue(success);
+            Assert.IsNull(context.CustomerRepository.FindById(Guid.Parse(customerId)));
+        }
+
+        [TestMethod]
+        public void FollowShop() {
+            string shopId = context.CreateNewShop();
+            string customerId = context.CreateNewCustomer("LoginId", "Password", "Email");
+            FollowShopInput input = new FollowShopInput();
+            input.CustomerId = customerId;
+            input.ShopId = shopId;
+
+            context.AccountController.FollowShop(input);
+            Assert.AreEqual(1, context.CustomerRepository.FindById(Guid.Parse(customerId)).Shops.Count);
+            Assert.AreEqual(1, context.ShopRepository.FindById(Guid.Parse(shopId)).Customers.Count);
+        }
+
+        [TestMethod]
+        public void AddCoupon() {
+            string accountId = context.CreateNewStaff("loginId", "password", "email");
+            string shopId = context.StaffRepository.FindById(Guid.Parse(accountId))!.ShopId.ToString();
+            string couponId = context.CreateNewSeasoningCoupon(accountId, shopId);
+            string customerId = context.CreateNewCustomer("LoginId", "Password", "Email");
+            AddCouponInput input = new AddCouponInput();
+            input.CustomerId = customerId;
+            input.CouponId = couponId;
+
+            context.AccountController.AddCoupon(input);
+            Assert.AreEqual(1, context.CustomerRepository.FindById(Guid.Parse(customerId)).Coupons.Count);
+            Assert.AreEqual(1, context.CustomerRepository.FindById(Guid.Parse(customerId), Guid.Parse(couponId)).Quantity);
+
+            context.AccountController.AddCoupon(input);
+            Assert.AreEqual(1, context.CustomerRepository.FindById(Guid.Parse(customerId)).Coupons.Count);
+            Assert.AreEqual(2, context.CustomerRepository.FindById(Guid.Parse(customerId), Guid.Parse(couponId)).Quantity);
         }
     }
 }

@@ -9,10 +9,16 @@ namespace Elecookies.Controllers {
     public class AccountController {
         private AccountRepository accountRepository;
         private StaffRepository staffRepository;
+        private CustomerRepository customerRepository;
+        private ShopRepository shopRepository;
+        private CouponRepository couponRepository;
 
-        public AccountController(AccountRepository accountRepository, StaffRepository staffRepository) {
+        public AccountController(AccountRepository accountRepository, StaffRepository staffRepository, CustomerRepository customerRepository, ShopRepository shopRepository, CouponRepository couponRepository) {
             this.accountRepository = accountRepository;
             this.staffRepository = staffRepository;
+            this.customerRepository = customerRepository;
+            this.shopRepository = shopRepository;
+            this.couponRepository = couponRepository;
         }
 
         [Route("create")]
@@ -78,7 +84,7 @@ namespace Elecookies.Controllers {
         [HttpPost]
         public void EditAccountAddress(EditAccountAddressInput input) {
             Account? account = accountRepository.FindById(Guid.Parse(input.UserId));
-            if (account != null){
+            if (account != null) {
                 account.Address = input.Address;
                 accountRepository.Save(account);
             }
@@ -102,7 +108,7 @@ namespace Elecookies.Controllers {
             return "";
         }
 
-        [Route ("create-staff")]
+        [Route("create-staff")]
         [HttpPost]
         public string CreateStaff(CreateStaffInput input) {
             if (staffRepository.All().Find(staff => staff.LoginId == input.LoginId) != null) {
@@ -114,7 +120,7 @@ namespace Elecookies.Controllers {
 
             Guid id = Guid.NewGuid();
             Staff staff = new Staff(id, Guid.Parse(input.ShopId), input.LoginId, input.Password, input.Name, input.Email, input.Address);
-            
+
             staffRepository.Save(staff);
 
             return staff.Id.ToString();
@@ -129,6 +135,58 @@ namespace Elecookies.Controllers {
                 return true;
             }
             return false;
+        }
+
+        public string CreateCustomer(CreateCustomerInput input) {
+            if (customerRepository.All().Find(customer => customer.LoginId == input.LoginId) != null) {
+                return "";
+            }
+            if (customerRepository.All().Find(customer => customer.Email == input.Email) != null) {
+                return "";
+            }
+
+            Guid id = Guid.NewGuid();
+            Customer customer = new Customer(id, input.LoginId, input.Password, input.Name, input.Email, input.Address);
+
+            customerRepository.Save(customer);
+
+            return customer.Id.ToString();
+        }
+
+        public bool DeleteCustomer(DeleteCustomerInput input) {
+            Customer? customer = customerRepository.FindById(Guid.Parse(input.UserId));
+            if (customer != null && customer.Password == input.Password) {
+                customerRepository.Delete(customer.Id);
+                return true;
+            }
+            return false;
+        }
+
+        public void FollowShop(FollowShopInput input) {
+            Customer? customer = customerRepository.FindById(Guid.Parse(input.CustomerId));
+            Shop? shop = shopRepository.FindById(Guid.Parse(input.ShopId));
+            if (customer != null && shop != null) {
+                customer.Shops.Add(shop);
+                shop.Customers.Add(customer);
+                customerRepository.Save(customer);
+                shopRepository.Save(shop);
+            }
+        }
+
+        public void AddCoupon(AddCouponInput input) {
+            Customer? customer = customerRepository.FindById(Guid.Parse(input.CustomerId));
+            Coupon? coupon = couponRepository.FindById(Guid.Parse(input.CouponId));
+            if (customer != null && coupon != null) {
+                Has? has = customerRepository.FindById(customer.Id, coupon.Id);
+                if (has != null) {
+                    has.Quantity += 1;
+                } else {
+                    has = new Has(customer.Id, coupon.Id, 1);
+                    customer.Coupons.Add(coupon);
+                    coupon.Customers.Add(customer);
+                }
+                customerRepository.Save(has);
+            }
         }
     }
 }
