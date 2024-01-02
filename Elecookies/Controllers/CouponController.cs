@@ -1,8 +1,11 @@
 ﻿using Elecookies.Entities;
 using Elecookies.ReadModels;
 using Elecookies.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Elecookies.Controllers {
+    [Route("api/coupon")]
+    [ApiController]
     public class CouponController {
         private CouponRepository couponRepository;
         private StaffRepository staffRepository;
@@ -14,6 +17,8 @@ namespace Elecookies.Controllers {
             this.shopRepository = shopRepository;
         }
 
+        [Route("shipping/create")]
+        [HttpPost]
         public string CreateShippingCoupon(CreateShippingCouponInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return "";
@@ -30,6 +35,8 @@ namespace Elecookies.Controllers {
             return coupon.Id.ToString();
         }
 
+        [Route("shipping/modify/price")]
+        [HttpPost]
         public void EditShippingCouponPrice(EditShippingCouponPriceInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;
@@ -43,8 +50,10 @@ namespace Elecookies.Controllers {
                 coupon.CostLowerBound = input.Price;
                 couponRepository.Save(coupon);
             }
-        } 
+        }
 
+        [Route("shipping/modify/date")]
+        [HttpPost]
         public void EditShippingCouponDate(EditShippingCouponDateInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;
@@ -61,6 +70,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("shipping/delete")]
+        [HttpPost]
         public bool DeleteShippingCoupon(DeleteShippingCouponInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return false;
@@ -79,7 +90,9 @@ namespace Elecookies.Controllers {
             }
             return false;
         }
-        
+
+        [Route("seasoning/create")]
+        [HttpPost]
         public string CreateSeasoningCoupon(CreateSeasoningCouponInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return "";
@@ -97,6 +110,8 @@ namespace Elecookies.Controllers {
             return coupon.Id.ToString();
         }
 
+        [Route("seasoning/modify/price")]
+        [HttpPost]
         public void EditSeasoningCouponPrice(EditSeasoningCouponPriceInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;
@@ -112,6 +127,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("seasoning/modify/date")]
+        [HttpPost]
         public void EditSeasoningCouponDate(EditSeasoningCouponDateInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;
@@ -126,8 +143,10 @@ namespace Elecookies.Controllers {
                 coupon.EndTime = input.EndTime;
                 couponRepository.Save(coupon);
             }
-        } 
+        }
 
+        [Route("seasoning/modify/rate")]
+        [HttpPost]
         public void EditSeasoningCouponRate(EditSeasoningCouponRateInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;
@@ -143,6 +162,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("seasoning/delete")]
+        [HttpPost]
         public bool DeleteSeasoningCoupon(DeleteSeasoningCouponInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return false;

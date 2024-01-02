@@ -12,9 +12,9 @@ namespace Elecookies.Entities {
         public Guid Id { get; set; }
         [Column("product_id", TypeName = "uuid")]
         public Guid ProductId { get; set; }
-        [Column("start_time", TypeName = "timestamp")]
+        [Column("start_time", TypeName = "varchar")]
         public string StartTime { get; set; }
-        [Column("end_time", TypeName = "timestamp")]
+        [Column("end_time", TypeName = "varchar")]
         public string EndTime { get; set; }
         [Column("discount_rate", TypeName = "int")]
         public float DiscountRate { get; set; }

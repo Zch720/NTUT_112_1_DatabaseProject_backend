@@ -137,6 +137,8 @@ namespace Elecookies.Controllers {
             return false;
         }
 
+        [Route("signup")]
+        [HttpPost]
         public string CreateCustomer(CreateCustomerInput input) {
             if (customerRepository.All().Find(customer => customer.LoginId == input.LoginId) != null) {
                 return "";
@@ -153,6 +155,8 @@ namespace Elecookies.Controllers {
             return customer.Id.ToString();
         }
 
+        [Route("delete-account")]
+        [HttpPost]
         public bool DeleteCustomer(DeleteCustomerInput input) {
             Customer? customer = customerRepository.FindById(Guid.Parse(input.UserId));
             if (customer != null && customer.Password == input.Password) {
@@ -162,6 +166,8 @@ namespace Elecookies.Controllers {
             return false;
         }
 
+        [Route("follow-shop")]
+        [HttpPost]
         public void FollowShop(FollowShopInput input) {
             Customer? customer = customerRepository.FindById(Guid.Parse(input.CustomerId));
             Shop? shop = shopRepository.FindById(Guid.Parse(input.ShopId));
@@ -173,6 +179,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("add-coupon")]
+        [HttpPost]
         public void AddCoupon(AddCouponInput input) {
             Customer? customer = customerRepository.FindById(Guid.Parse(input.CustomerId));
             Coupon? coupon = couponRepository.FindById(Guid.Parse(input.CouponId));
@@ -187,6 +195,18 @@ namespace Elecookies.Controllers {
                 }
                 customerRepository.Save(has);
             }
+        }
+
+        [Route("type")]
+        [HttpGet]
+        public string GetAccountType(string userId) {
+            if (customerRepository.FindById(Guid.Parse(userId)) != null) {
+                return "customer";
+            }
+            if (staffRepository.FindById(Guid.Parse(userId)) != null) {
+                return "staff";
+            }
+            return "";
         }
     }
 }

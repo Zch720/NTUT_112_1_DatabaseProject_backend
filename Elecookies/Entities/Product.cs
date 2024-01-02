@@ -23,7 +23,7 @@ namespace Elecookies.Entities {
         public ICollection<ProductImage> Images { get; } = new List<ProductImage>();
         [Column("description", TypeName = "varchar")]
         public string Description { get; set; }
-        [Column("publish_time", TypeName = "timestamp")]
+        [Column("publish_time", TypeName = "varchar")]
         public string PublishTime { get; set; }
         [Column("for_sale", TypeName = "boolean")]
         public bool ForSale { get; set; }
