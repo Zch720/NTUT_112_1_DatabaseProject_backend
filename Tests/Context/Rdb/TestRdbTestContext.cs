@@ -28,6 +28,7 @@ namespace Test.Context.Rdb {
 
         public TestRdbTestContext() {
             DbContext = new TestRdbDbContext();
+            (DbContext as DbContext)!.Database.EnsureCreated();
 
             AccountRepository = new AccountRepository(DbContext);
             ShopRepository = new ShopRepository(DbContext);

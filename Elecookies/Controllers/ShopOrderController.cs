@@ -1,8 +1,11 @@
 ﻿using Elecookies.Entities;
 using Elecookies.ReadModels;
 using Elecookies.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Elecookies.Controllers {
+    [Route("api/order")]
+    [ApiController]
     public class ShopOrderController {
         private ShopOrderRepository shopOrderRepository;
         private CustomerRepository customerRepository;
@@ -18,6 +21,8 @@ namespace Elecookies.Controllers {
             this.couponRepository = couponRepository;
         }
 
+        [Route("create")]
+        [HttpPost]
         public string CreateShopOrder(CreateShopOrderInput input) {
             if (customerRepository.FindById(Guid.Parse(input.CustomerId)) == null) {
                 return "";
@@ -40,15 +45,16 @@ namespace Elecookies.Controllers {
                     shopOrder.Products.Add(product);
                     shopOrder.OrderConsistsOf.Add(orderConsistsOf);
                     productRepository.Save(product);
-                    
                 }
             }
             Customer customer = customerRepository.FindById(Guid.Parse(input.CustomerId));
             customer.ShopOrders.Add(shopOrder);
             customerRepository.Save(customer);
+            shopOrder.Account = customer;
             Shop shop = shopRepository.FindById(Guid.Parse(input.ShopId));
             shop.ShopOrders.Add(shopOrder);
             shopRepository.Save(shop);
+            shopOrder.Shop = shop;
             if (input.ShippingCouponId != null) {
                 Coupon? shippingCoupon = couponRepository.FindById(Guid.Parse(input.ShippingCouponId));
                 if (shippingCoupon != null) {
@@ -72,6 +78,8 @@ namespace Elecookies.Controllers {
             return shopOrder.Id.ToString();
         }
 
+        [Route("pay")]
+        [HttpPost]
         public void PayOrder(PayOrderInput input) {
             if (customerRepository.FindById(Guid.Parse(input.CustomerId)) == null) {
                 return;
@@ -84,6 +92,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("cancel")]
+        [HttpPost]
         public void CancelOrder(CancelOrderInput input) {
             if (customerRepository.FindById(Guid.Parse(input.CustomerId)) == null) {
                 return;
@@ -96,6 +106,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("update-status")]
+        [HttpPost]
         public void UpdateOrderStatus(UpdateOrderStatusInput input) {
             if (customerRepository.FindById(Guid.Parse(input.CustomerId)) == null) {
                 return;

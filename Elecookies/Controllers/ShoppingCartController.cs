@@ -1,8 +1,11 @@
 ﻿using Elecookies.Entities;
 using Elecookies.ReadModels;
 using Elecookies.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Elecookies.Controllers {
+    [Route("api/shopping-cart")]
+    [ApiController]
     public class ShoppingCartController {
         private ShoppingCartRepository shoppingCartRepository;
         private CustomerRepository customerRepository;
@@ -14,6 +17,8 @@ namespace Elecookies.Controllers {
             this.productRepository = productRepository;
         }
 
+        [Route("create")]
+        [HttpPost]
         public string CreateShoppingCart(CreateShoppingCartInput input) {
             if (shoppingCartRepository.FindById(Guid.Parse(input.CustomerId)) != null) {
                 return "";
@@ -33,6 +38,8 @@ namespace Elecookies.Controllers {
             return shoppingCart.CustomerId.ToString();
         }
 
+        [Route("set-quantity")]
+        [HttpPost]
         public void SetQuantityToShoppingCart(SetQuantityToShoppingCartInput input) {
             if (customerRepository.FindById(Guid.Parse(input.CustomerId)) == null) {
                 return;
@@ -51,7 +58,9 @@ namespace Elecookies.Controllers {
 
             shoppingCartRepository.Save(shoppingCartHas);
         }
-        
+
+        [Route("remove")]
+        [HttpPost]
         public bool RemoveFromShoppingCart(RemoveFromShoppingCartInput input) {
             if (customerRepository.FindById(Guid.Parse(input.CustomerId)) == null) {
                 return false;
@@ -68,6 +77,8 @@ namespace Elecookies.Controllers {
             return false;
         }
 
+        [Route("delete")]
+        [HttpPost]
         public bool DeleteShoppingCart(DeleteShoppingCartInput input) {
             ShoppingCart? shoppingCart = shoppingCartRepository.FindById(Guid.Parse(input.CustomerId));
             if (shoppingCart != null) {

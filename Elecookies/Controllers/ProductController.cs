@@ -1,8 +1,11 @@
 ﻿using Elecookies.Entities;
 using Elecookies.ReadModels;
 using Elecookies.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Elecookies.Controllers {
+    [Route("api/product")]
+    [ApiController]
     public class ProductController {
         private ProductRepository productRepository;
         private StaffRepository staffRepository;
@@ -12,6 +15,8 @@ namespace Elecookies.Controllers {
             this.staffRepository = staffRepository;
         }
 
+        [Route("create")]
+        [HttpPost]
         public string CreateProduct(CreateProductInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return "";
@@ -24,6 +29,8 @@ namespace Elecookies.Controllers {
             return product.Id.ToString();
         }
 
+        [Route("delete")]
+        [HttpPost]
         public bool DeleteProduct(DeleteProductInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return false;
@@ -48,6 +55,8 @@ namespace Elecookies.Controllers {
             return false;
         }
 
+        [Route("image/create")]
+        [HttpPost]
         public string CreateProductImage(CreateProductImageInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return "";
@@ -69,6 +78,8 @@ namespace Elecookies.Controllers {
             return productImage.ProductId + "_" + productImage.ImageOrder.ToString();
         }
 
+        [Route("image/delete")]
+        [HttpPost]
         public bool DeleteProductImage(DeleteProductImageInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return false;
@@ -88,6 +99,8 @@ namespace Elecookies.Controllers {
             return false;
         }
 
+        [Route("edit-name")]
+        [HttpPost]
         public void EditProductName(EditProductNameInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;
@@ -103,6 +116,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("edit-stock")]
+        [HttpPost]
         public void EditProductStock(EditProductStockInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;
@@ -118,6 +133,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("edit-price")]
+        [HttpPost]
         public void EditProductPrice(EditProductPriceInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;
@@ -133,6 +150,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("edit-image")]
+        [HttpPost]
         public void EditProductImage(EditProductImageInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;
@@ -148,6 +167,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("edit-description")]
+        [HttpPost]
         public void EditProductDescription(EditProductDescriptionInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;
@@ -163,6 +184,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("discount/create")]
+        [HttpPost]
         public string CreateProductDiscount(CreateProductDiscountInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return "";
@@ -185,6 +208,8 @@ namespace Elecookies.Controllers {
             return productDiscount.Id.ToString();
         }
 
+        [Route("discount/delete")]
+        [HttpPost]
         public bool DeleteProductDiscount(DeleteProductDiscountInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return false;
@@ -207,6 +232,8 @@ namespace Elecookies.Controllers {
             return false;
         }
 
+        [Route("discount/edit-discount-rate")]
+        [HttpPost]
         public void EditProductDiscountRate(EditProductDiscountRateInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;
@@ -225,6 +252,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("discount/edit-start-time")]
+        [HttpPost]
         public void EditProductDiscountStartTime(EditProductDiscountStartTimeInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;
@@ -243,6 +272,8 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("discount/edit-end-time")]
+        [HttpPost]
         public void EditProductDiscountEndTime(EditProductDiscountEndTimeInput input) {
             if (staffRepository.FindById(Guid.Parse(input.AccountId))?.ShopId != Guid.Parse(input.ShopId)) {
                 return;

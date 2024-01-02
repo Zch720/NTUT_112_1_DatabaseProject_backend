@@ -18,15 +18,15 @@ namespace Tests.Controller {
         [TestCleanup]
         public void TearDown() {
             var shoppingCarts = context.ShoppingCartRepository.All();
-            var accounts = context.AccountRepository.All();
+            var staffs = context.StaffRepository.All();
             var products = context.ProductRepository.All();
             var customers = context.CustomerRepository.All();
             var shops = context.ShopRepository.All();
             foreach (var shoppingCart in shoppingCarts) {
                 context.ShoppingCartRepository.Delete(shoppingCart.CustomerId);
             }
-            foreach (var account in accounts) {
-                context.AccountRepository.Delete(account.Id);
+            foreach (var staff in staffs) {
+                context.StaffRepository.Delete(staff.Id);
             }
             foreach (var product in  products) {
                 context.ProductRepository.Delete(product.Id);

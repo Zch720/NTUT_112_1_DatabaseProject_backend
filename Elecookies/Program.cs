@@ -17,10 +17,12 @@ builder.Services.AddCors(options => {
 builder.Services.AddSingleton<ElecookiesDbContext, RdbContext>();
 builder.Services.AddSingleton<AccountRepository>();
 builder.Services.AddSingleton<ShopRepository>();
+builder.Services.AddSingleton<ShopOrderRepository>();
 builder.Services.AddSingleton<CustomerRepository>();
 builder.Services.AddSingleton<StaffRepository>();
 builder.Services.AddSingleton<ProductRepository>();
 builder.Services.AddSingleton<CouponRepository>();
+builder.Services.AddSingleton<ShoppingCartRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

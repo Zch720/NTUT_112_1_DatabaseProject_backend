@@ -15,25 +15,14 @@ namespace Tests.Controller {
         public void TearDown() {
             var shopOrders = context.ShopOrderRepository.All();
             var customers = context.CustomerRepository.All();
-            var staffs = context.StaffRepository.All();
             var shops = context.ShopRepository.All();
             var coupons = context.CouponRepository.All();
             var products = context.ProductRepository.All();
-            var orderConsistOfs = context.ShopOrderRepository.AllOrderConsistsOf();
-            foreach (var staff in staffs) {
-                context.StaffRepository.Delete(staff.Id);
-            }
             foreach (var shop in shops) {
                 context.ShopRepository.Delete(shop.Id);
             }
             foreach (var customer in customers) {
                 context.CustomerRepository.Delete(customer.Id);
-            }
-            foreach (var shopOrder in shopOrders) {
-                context.ShopOrderRepository.Delete(shopOrder.Id);
-            }
-            foreach (var coupon in coupons) {
-                context.CouponRepository.Delete(coupon.Id);
             }
         }
 

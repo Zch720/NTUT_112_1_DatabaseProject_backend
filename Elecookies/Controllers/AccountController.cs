@@ -2,6 +2,8 @@
 using Elecookies.ReadModels;
 using Elecookies.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Elecookies.Controllers {
     [Route("api/user")]
@@ -117,11 +119,17 @@ namespace Elecookies.Controllers {
             if (staffRepository.All().Find(staff => staff.Email == input.Email) != null) {
                 return "";
             }
+            if (shopRepository.FindById(Guid.Parse(input.ShopId)) == null) {
+                return "";
+            }
 
             Guid id = Guid.NewGuid();
             Staff staff = new Staff(id, Guid.Parse(input.ShopId), input.LoginId, input.Password, input.Name, input.Email, input.Address);
-
+            Shop shop = shopRepository.FindById(Guid.Parse(input.ShopId));
+            staff.Shop = shop;
+            shop.Staffs.Add(staff);
             staffRepository.Save(staff);
+            shopRepository.Save(shop);
 
             return staff.Id.ToString();
         }
@@ -131,7 +139,10 @@ namespace Elecookies.Controllers {
         public bool DeleteStaff(DeleteStaffInput input) {
             Staff? staff = staffRepository.FindById(Guid.Parse(input.Id));
             if (staff != null) {
+                Shop shop = shopRepository.FindById(staff.ShopId);
+                shop.Staffs.Remove(staff);
                 staffRepository.Delete(staff.Id);
+                shopRepository.Save(shop);
                 return true;
             }
             return false;
@@ -208,5 +219,52 @@ namespace Elecookies.Controllers {
             }
             return "";
         }
+
+        [Route("profile")]
+        [HttpGet]
+        public string GetAccountData(string userId) {
+            if (customerRepository.FindById(Guid.Parse(userId)) != null) {
+                return JsonSerializer.Serialize(customerRepository.FindById(Guid.Parse(userId)));
+            }
+            if (staffRepository.FindById(Guid.Parse(userId)) != null) {
+                return JsonSerializer.Serialize(staffRepository.FindById(Guid.Parse(userId)));
+            }
+            
+            return "";
+        }
+
+        [Route("followed-shops-count")]
+        [HttpGet]
+        public int GetFollowedShopCount(string userId) {
+            Customer? customer = customerRepository.FindById(Guid.Parse(userId));
+            if (customer != null) {
+                return customer.Shops.Count;
+            }
+            return 0;
+        }
+
+        [Route("followed-shops")]
+        [HttpGet]
+        public List<Shop> GetFollowShops(string userId, int from, int to) {
+            Customer? customer = customerRepository.FindById(Guid.Parse(userId));
+            if (customer != null) {
+                List<Shop> shops = customer.Shops;
+                if (from <= to && from >= 0 && to < shops.Count) {
+                    return shops.GetRange(from, to - from + 1);
+                }
+            }
+            return new List<Shop>();
+        }
+
+        //public string GetOrders(string userId, int from, int to) {
+        //    Customer? customer = customerRepository.FindById(Guid.Parse(userId));
+        //    if (customer != null) {
+        //        List<ShopOrder> shopOrders = customer.ShopOrders;
+        //        if (from <= to && from >= 0 && to < shopOrders.Count) {
+        //            List<ShopOrder> resultOrders = shopOrders.GetRange(from, to - from + 1);
+        //        }
+        //    }
+        //    return "";
+        //}
     }
 }
