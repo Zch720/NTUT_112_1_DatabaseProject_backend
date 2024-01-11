@@ -1,5 +1,8 @@
-﻿namespace Elecookies.Database {
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Elecookies.Database {
     public interface Repository <T, ID> {
+
         void Save(T value);
         void Delete(ID id);
         T? FindById(ID id);
