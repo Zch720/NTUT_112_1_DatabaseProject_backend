@@ -27,11 +27,31 @@ namespace Elecookies.Repositories {
         }
 
         public Shop? FindById(Guid id) {
-            return dbContext.Shops.Find(id);
+            Shop? shop = dbContext.Shops.Find(id);
+            if (shop == null) return null;
+            shop.Customers = dbContext.Shops
+                .Where(s => s.Id == id)
+                .SelectMany(s => s.Customers)
+                .ToList();
+            return shop;
         }
 
         public List<Shop> All() {
             return dbContext.Shops.ToList();
+        }
+
+        public List<Product> GetProducts(Guid id) {
+            try {
+                if (FindById(id) != null) {
+                    return dbContext.Shops
+                        .Where(s => s.Id == id)
+                        .SelectMany(s => s.Products)
+                        .ToList();
+                }
+            }
+            catch {
+            }
+            return new();
         }
     }
 }

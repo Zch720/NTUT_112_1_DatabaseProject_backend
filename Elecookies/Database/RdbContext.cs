@@ -24,11 +24,11 @@ namespace Elecookies.Database {
             modelBuilder.Entity<Customer>()
                 .HasMany(e => e.Shops)
                 .WithMany(e => e.Customers)
-                .UsingEntity(
-                    "Follow",
-                    l => l.HasOne(typeof(Customer)).WithMany().OnDelete(DeleteBehavior.Cascade).HasForeignKey("CustomerId").HasPrincipalKey(nameof(Customer.Id)),
-                    r => r.HasOne(typeof(Shop)).WithMany().OnDelete(DeleteBehavior.SetNull).HasForeignKey("ShopId").HasPrincipalKey(nameof(Shop.Id)),
-                    j => j.HasKey("CustomerId", "ShopId"));
+                .UsingEntity<Follow>(
+                    "Follows",
+                    f => f.HasOne(e => e.Shop).WithMany().HasForeignKey(e => e.ShopId),
+                    f => f.HasOne(e => e.Customer).WithMany().HasForeignKey(e => e.CustomerId)
+                );
             modelBuilder.Entity<Customer>()
                 .HasMany(e => e.Coupons)
                 .WithMany(e => e.Customers)
@@ -39,6 +39,11 @@ namespace Elecookies.Database {
                 .HasOne(e => e.Account)
                 .WithMany(e => e.ShopOrders)
                 .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Shop>()
+                .HasMany(e => e.Products)
+                .WithOne(e => e.Shop)
+                .HasForeignKey(e => e.ShopId)
+                .IsRequired();
         }
         #endregion
 

@@ -1,5 +1,7 @@
 ﻿using Elecookies.Database;
 using Elecookies.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace Elecookies.Repositories {
     public class CustomerRepository : Repository<Customer, Guid> {
@@ -44,7 +46,13 @@ namespace Elecookies.Repositories {
         }
 
         public Customer? FindById(Guid id) {
-            return dbContext.Customers.Find(id);
+            Customer? customer = dbContext.Customers.Find(id);
+            if (customer == null) return null;
+            customer.Shops = dbContext.Customers
+                .Where(c => c.Id == id)
+                .SelectMany(c => c.Shops)
+                .ToList();
+            return customer;
         }
 
         public Has? FindById(Guid customerId, Guid couponId) {
@@ -57,6 +65,49 @@ namespace Elecookies.Repositories {
 
         public List<Has> AllHas() {
             return dbContext.Has.ToList();
+        }
+
+        public List<Shop> GetCustomerFollows(Guid customerId) {
+            try {
+                if (FindById(customerId) != null) {
+                    return dbContext.Customers
+                        .Where(c => c.Id == customerId)
+                        .SelectMany(c => c.Shops)
+                        .ToList();
+                }
+            }
+            catch (Exception ex) {
+            }
+            return new();
+        }
+
+        public void FollowShop(Guid customerId, Guid shopId) {
+            try {
+                Customer customer = dbContext.Customers.Include(c => c.Shops)
+                    .Single(c => c.Id == customerId);
+                Shop shop = dbContext.Shops.Single(s => s.Id == shopId);
+                customer.Shops.Add(shop);
+                dbContext.Customers.Update(customer);
+
+                shop = dbContext.Shops.Include(s => s.Customers)
+                    .Single(s => s.Id == shopId);
+                customer = dbContext.Customers.Single(c => c.Id == customerId);
+                shop.Customers.Add(customer);
+                dbContext.Shops.Update(shop);
+
+                dbContext.SaveChanges();
+            } catch {
+                Debug.WriteLine("error");
+            }
+        }
+
+        public void UnfollowShop(Guid customerId, Guid shopId) {
+            try {
+                Customer customer = dbContext.Customers.OrderBy(c => c.Id == customerId).Include(c => c.Shops).First();
+                dbContext.SaveChanges();
+            } catch {
+                Debug.WriteLine("error");
+            }
         }
     }
 }

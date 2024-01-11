@@ -33,7 +33,7 @@ namespace Tests {
             input.Name = "Name";
             input.Address = "Address";
 
-            return AccountController.CreateAccount(input);
+            return AccountController.CreateCustomer(input);
         }
 
         public string CreateNewShop() {

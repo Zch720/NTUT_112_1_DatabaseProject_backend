@@ -52,7 +52,7 @@ namespace Tests.Controller {
             input.Email = "email";
             input.Address = "address";
 
-            string id = context.AccountController.CreateAccount(input);
+            string id = context.AccountController.CreateCustomer(input);
 
             Assert.IsNotNull(context.AccountRepository.FindById(Guid.Parse(id)));
         }
@@ -65,13 +65,13 @@ namespace Tests.Controller {
             input.Name = "username1";
             input.Email = "email1";
             input.Address = "address1";
-            context.AccountController.CreateAccount(input);
+            context.AccountController.CreateCustomer(input);
 
             input.Password = "password1";
             input.Name = "username2";
             input.Email = "email2";
             input.Address = "address2";
-            string id2 = context.AccountController.CreateAccount(input);
+            string id2 = context.AccountController.CreateCustomer(input);
 
             Assert.AreEqual("", id2);
         }
@@ -84,13 +84,13 @@ namespace Tests.Controller {
             input.Name = "username1";
             input.Email = "email";
             input.Address = "address1";
-            context.AccountController.CreateAccount(input);
+            context.AccountController.CreateCustomer(input);
 
             input.LoginId = "loginId2";
             input.Password = "password2";
             input.Name = "username2";
             input.Address = "address2";
-            string id2 = context.AccountController.CreateAccount(input);
+            string id2 = context.AccountController.CreateCustomer(input);
 
             Assert.AreEqual("", id2);
         }

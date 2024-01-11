@@ -27,6 +27,7 @@ namespace Elecookies.Entities {
         public string PublishTime { get; set; }
         [Column("for_sale", TypeName = "boolean")]
         public bool ForSale { get; set; }
+        public Shop Shop { get; set; }
         public ICollection<ProductDiscount> Discounts { get; } = new List<ProductDiscount>();
         public List<ShoppingCart> ShoppingCarts { get; set; } = new();
         public List<ShoppingCartHas> ShoppingCartHas { get; set; } = new();

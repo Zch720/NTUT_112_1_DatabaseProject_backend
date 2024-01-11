@@ -1,7 +1,9 @@
 ﻿using Elecookies.Entities;
 using Elecookies.ReadModels;
 using Elecookies.Repositories;
+using Elecookies.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -25,20 +27,20 @@ namespace Elecookies.Controllers {
 
         [Route("create")]
         [HttpPost]
-        public string CreateAccount(CreateAccountInput input) {
-            if (accountRepository.All().Find(account => account.LoginId == input.LoginId) != null) {
+        public string CreateCustomer(CreateAccountInput input) {
+            if (customerRepository.All().Find(customer => customer.LoginId == input.LoginId) != null) {
                 return "";
             }
-            if (accountRepository.All().Find(account => account.Email == input.Email) != null) {
+            if (customerRepository.All().Find(customer => customer.Email == input.Email) != null) {
                 return "";
             }
 
             Guid id = Guid.NewGuid();
-            Account account = new Account(id, input.LoginId, input.Password, input.Name, input.Email, input.Address);
+            Customer customer = new Customer(id, input.LoginId, input.Password, input.Name, input.Email, input.Address);
 
-            accountRepository.Save(account);
+            customerRepository.Save(customer);
 
-            return account.Id.ToString();
+            return customer.Id.ToString();
         }
 
         [Route("delete")]
@@ -52,8 +54,8 @@ namespace Elecookies.Controllers {
             return false;
         }
 
-        [Route("edit-name")]
-        [HttpPost]
+        [Route("modify/name")]
+        [HttpPut]
         public void EditAccountName(EditAccountNameInput input) {
             Account? account = accountRepository.FindById(Guid.Parse(input.UserId));
             if (account != null) {
@@ -62,8 +64,8 @@ namespace Elecookies.Controllers {
             }
         }
 
-        [Route("edit-password")]
-        [HttpPost]
+        [Route("modify/password")]
+        [HttpPut]
         public void EditAccountPassword(EditAccountPasswordInput input) {
             Account? account = accountRepository.FindById(Guid.Parse(input.UserId));
             if (account != null && account.Password == input.Password) {
@@ -72,8 +74,8 @@ namespace Elecookies.Controllers {
             }
         }
 
-        [Route("edit-email")]
-        [HttpPost]
+        [Route("modify/email")]
+        [HttpPut]
         public void EditAccountEmail(EditAccountEmailInput input) {
             Account? account = accountRepository.FindById(Guid.Parse(input.UserId));
             if (account != null) {
@@ -82,8 +84,8 @@ namespace Elecookies.Controllers {
             }
         }
 
-        [Route("edit-address")]
-        [HttpPost]
+        [Route("modify/address")]
+        [HttpPut]
         public void EditAccountAddress(EditAccountAddressInput input) {
             Account? account = accountRepository.FindById(Guid.Parse(input.UserId));
             if (account != null) {
@@ -92,17 +94,39 @@ namespace Elecookies.Controllers {
             }
         }
 
+        [Route("modify/phone")]
+        [HttpPut]
+        public void EditAccountPhone(EditAccountPhoneInput input) {
+            Account? account = accountRepository.FindById(Guid.Parse(input.UserId));
+            if (account != null) {
+                account.Phone = input.Phone;
+                accountRepository.Save(account);
+            }
+        }
+
         [Route("signin")]
         [HttpPost]
         public string Login(LoginInput input) {
-            Account? account = accountRepository.All().Find(account => {
-                return account.LoginId == input.UserAccount && account.Password == input.Password;
-            });
-            if (account == null) {
-                account = accountRepository.All().Find(account => {
+            Account? account = null;
+            
+            if (account == null )
+                account = customerRepository.All().Find(account => {
+                    return account.LoginId == input.UserAccount && account.Password == input.Password;
+                });
+            if (account == null)
+                account = customerRepository.All().Find(account => {
                     return account.Email == input.UserAccount && account.Password == input.Password;
                 });
-            }
+
+            if (account == null)
+                account = staffRepository.All().Find(account => {
+                    return account.LoginId == input.UserAccount && account.Password == input.Password;
+                });
+            if (account == null)
+                account = staffRepository.All().Find(account => {
+                    return account.Email == input.UserAccount && account.Password == input.Password;
+                });
+
 
             if (account != null) {
                 return account.Id.ToString();
@@ -180,13 +204,22 @@ namespace Elecookies.Controllers {
         [Route("follow-shop")]
         [HttpPost]
         public void FollowShop(FollowShopInput input) {
-            Customer? customer = customerRepository.FindById(Guid.Parse(input.CustomerId));
-            Shop? shop = shopRepository.FindById(Guid.Parse(input.ShopId));
-            if (customer != null && shop != null) {
-                customer.Shops.Add(shop);
-                shop.Customers.Add(customer);
-                customerRepository.Save(customer);
-                shopRepository.Save(shop);
+            //Customer? customer = customerRepository.FindById(Guid.Parse(input.CustomerId));
+            //Shop? shop = shopRepository.FindById(Guid.Parse(input.ShopId));
+            //if (customer == null || shop == null) return;
+
+            if (input.Follow) {
+                //customer.Shops.Add(shop);
+                //shop.Customers.Add(customer);
+                //customerRepository.Save(customer);
+                //shopRepository.Save(shop);
+                customerRepository.FollowShop(Guid.Parse(input.CustomerId), Guid.Parse(input.ShopId));
+            } else {
+                //customer.Shops.Remove(customer.Shops.First(s => s.Id == shop.Id));
+                //shop.Customers.Remove(shop.Customers.First(c => c.Id == customer.Id));
+                //customerRepository.Save(customer);
+                //shopRepository.Save(shop);
+                customerRepository.UnfollowShop(Guid.Parse(input.CustomerId), Guid.Parse(input.ShopId));
             }
         }
 
@@ -223,37 +256,54 @@ namespace Elecookies.Controllers {
         [Route("profile")]
         [HttpGet]
         public string GetAccountData(string userId) {
-            if (customerRepository.FindById(Guid.Parse(userId)) != null) {
-                return JsonSerializer.Serialize(customerRepository.FindById(Guid.Parse(userId)));
+            Account? account = null;
+            if (account == null) {
+                account = customerRepository.FindById(Guid.Parse(userId));
             }
-            if (staffRepository.FindById(Guid.Parse(userId)) != null) {
-                return JsonSerializer.Serialize(staffRepository.FindById(Guid.Parse(userId)));
+            if (account == null) {
+                account = staffRepository.FindById(Guid.Parse(userId));
             }
             
+            if (account != null) {
+                AccountProfileOutput output = new AccountProfileOutput();
+                output.LoginId = account.LoginId;
+                output.Name = account.Name;
+                output.Address = account.Address;
+                output.Email = account.Email;
+                output.Phone = account.Phone;
+                return JsonSerializer.Serialize(output);
+            }
             return "";
+        }
+
+        [Route("followed-shop")]
+        [HttpGet]
+        public bool GetIsShopFollowed(string userId, string shopId) {
+            return customerRepository
+                .GetCustomerFollows(Guid.Parse(userId))
+                .Find(shop => shop.Id == Guid.Parse(shopId)) != null;
         }
 
         [Route("followed-shops-count")]
         [HttpGet]
         public int GetFollowedShopCount(string userId) {
-            Customer? customer = customerRepository.FindById(Guid.Parse(userId));
-            if (customer != null) {
-                return customer.Shops.Count;
-            }
-            return 0;
+            return customerRepository.GetCustomerFollows(Guid.Parse(userId)).Count;
         }
 
         [Route("followed-shops")]
         [HttpGet]
-        public List<Shop> GetFollowShops(string userId, int from, int to) {
-            Customer? customer = customerRepository.FindById(Guid.Parse(userId));
-            if (customer != null) {
-                List<Shop> shops = customer.Shops;
-                if (from <= to && from >= 0 && to < shops.Count) {
-                    return shops.GetRange(from, to - from + 1);
-                }
+        public List<CustomerFollowedShopsOutput> GetFollowShops(string userId, int from, int to) {
+            List<CustomerFollowedShopsOutput> shops = new List<CustomerFollowedShopsOutput>();
+            
+            List<Shop> follows = customerRepository.GetCustomerFollows(Guid.Parse(userId));
+            foreach (Shop shop in follows.GetRange(from, to - from + 1)) {
+                CustomerFollowedShopsOutput output = new();
+                output.Id = shop.Id.ToString();
+                output.Name = shop.Name;
+                output.Icon = shop.Icon;
+                shops.Add(output);
             }
-            return new List<Shop>();
+            return shops;
         }
 
         //public string GetOrders(string userId, int from, int to) {

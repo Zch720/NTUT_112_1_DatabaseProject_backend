@@ -53,7 +53,7 @@ namespace Elecookies.Repositories {
         public ShoppingCartHas? FindById(Guid customerId, Guid productId) {
             return dbContext.ShoppingCartHas.Find(customerId, productId);
         }
-        
+
         public List<ShoppingCart> All() {
             return dbContext.ShoppingCarts.ToList();
         }

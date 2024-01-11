@@ -1,7 +1,10 @@
-﻿namespace Elecookies.Entities {
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Elecookies.Entities {
     public class Customer : Account {
         public ShoppingCart? ShoppingCart { get; set; }
-        public List<Shop> Shops { get; } = new();
+        public ICollection<Shop> Shops { get; set; } = new List<Shop>();
+        //public ICollection<Follow> Follows { get; set; }
         public List<Coupon> Coupons { get; } = new();
         public List<Has> Has { get; } = new();
         public List<ShopOrder> ShopOrders { get; } = new();
