@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Test.Context.InMemory;
 using Tests.Controller;
 
@@ -19,6 +20,30 @@ namespace Tests {
         [TestClass]
         public class ShopControllerTesting : ShopControllerTest {
             public ShopControllerTesting() : base(context) {
+            }
+        }
+
+        [TestClass]
+        public class ProductControllerTesting : ProductControllerTest { 
+            public ProductControllerTesting() : base(context) {
+            }
+        }
+
+        [TestClass]
+        public class ShoppingCartControllerTesting : ShoppingCartControllerTest {
+            public ShoppingCartControllerTesting() : base(context) {
+            }
+        }
+
+        [TestClass]
+        public class CouponControllerTesting : CouponControllerTest {
+            public CouponControllerTesting() : base(context) {  
+            }
+        }
+
+        [TestClass]
+        public class ShopOrderControllerTesting : ShopOrderControllerTest {
+            public ShopOrderControllerTesting() : base(context) {
             }
         }
     }

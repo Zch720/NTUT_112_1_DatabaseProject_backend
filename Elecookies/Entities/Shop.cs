@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Elecookies.Entities {
     public class Shop {
@@ -13,6 +14,11 @@ namespace Elecookies.Entities {
         public string PhoneNumber { get; set; }
 
         public string Description { get; set; }
+        public string Icon { get; set; }
+        public ICollection<Coupon> Coupons { get; set; } = new List<Coupon>();
+        public ICollection<ShopOrder> ShopOrders { get; set; } = new List<ShopOrder>();
+        public ICollection<Staff> Staffs { get; set; } = new List<Staff>();
+        public ICollection<Product> Products { get; set; }
 
         public Shop(Guid id, string name, string address, string email, string phoneNumber, string description) {
             Id = id;
