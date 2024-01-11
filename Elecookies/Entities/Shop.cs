@@ -15,7 +15,6 @@ namespace Elecookies.Entities {
 
         public string Description { get; set; }
         public string Icon { get; set; }
-        public ICollection<Customer> Customers { get; set; }
         public ICollection<Coupon> Coupons { get; set; } = new List<Coupon>();
         public ICollection<ShopOrder> ShopOrders { get; set; } = new List<ShopOrder>();
         public ICollection<Staff> Staffs { get; set; } = new List<Staff>();

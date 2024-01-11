@@ -1,5 +1,6 @@
 ﻿using Elecookies.Database;
 using Elecookies.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace Elecookies.Repositories {
@@ -20,15 +21,15 @@ namespace Elecookies.Repositories {
             dbContext.SaveChanges();
         }
 
-        public void Save(ShoppingCartHas value) {
-            if (FindById(value.CustomerId, value.ProductId) == null) {
-                dbContext.ShoppingCartHas.Add(value);
-            }
-            else {
-                dbContext.ShoppingCartHas.Update(value);
-            }
-            dbContext.SaveChanges();
-        }
+        //public void Save(ShoppingCartHas value) {
+        //    if (FindById(value.CustomerId, value.ProductId) == null) {
+        //        dbContext.ShoppingCartHas.Add(value);
+        //    }
+        //    else {
+        //        dbContext.ShoppingCartHas.Update(value);
+        //    }
+        //    dbContext.SaveChanges();
+        //}
 
         public void Delete(Guid id) {
             ShoppingCart? shoppingCart = dbContext.ShoppingCarts.Find(id);
@@ -47,7 +48,10 @@ namespace Elecookies.Repositories {
         }
 
         public ShoppingCart? FindById(Guid id) {
-            return dbContext.ShoppingCarts.Find(id);
+            return dbContext.ShoppingCarts
+                .Where(e => e.CustomerId == id)
+                .Include(e => e.ShoppingCartHas)
+                .FirstOrDefault();
         }
 
         public ShoppingCartHas? FindById(Guid customerId, Guid productId) {

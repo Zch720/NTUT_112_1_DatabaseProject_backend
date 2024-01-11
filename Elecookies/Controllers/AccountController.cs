@@ -316,5 +316,91 @@ namespace Elecookies.Controllers {
         //    }
         //    return "";
         //}
+
+        [Route("staff/get-shop-profile")]
+        [HttpGet]
+        public ShopDataOutput? StaffGetShopProfile(string staffId) {
+            Staff? staff = staffRepository.FindById(Guid.Parse(staffId));
+            if (staff == null) return null;
+            ShopDataOutput output = new();
+            output.Id = staff.Shop.Id.ToString();
+            output.Name = staff.Shop.Name;
+            output.Address = staff.Shop.Address;
+            output.PhoneNumber = staff.Shop.PhoneNumber;
+            output.Icon = staff.Shop.Icon;
+            output.Description = staff.Shop.Description;
+            output.Email = staff.Shop.Email;
+            return output;
+        }
+
+        [Route("staff/shop/product/count")]
+        [HttpGet]
+        public int StaffGetShopProductsCount(string userId, string productType) {
+            Staff? staff = staffRepository.FindById(Guid.Parse(userId));
+            if (staff == null) return 0;
+            try {
+                return shopRepository
+                    .GetProducts(staff.ShopId)
+                    .Count(product => product.Category.Contains(GetProductCategory(productType)));
+            } catch {
+                return 0;
+            }
+        }
+
+        [Route("staff/shop/products")]
+        [HttpGet]
+        public List<ProductListItemOutput> StaffGetShopProducts(string userId, string productType, int from, int to) {
+            Staff? staff = staffRepository.FindById(Guid.Parse(userId));
+            if (staff == null) return new();
+            try {
+                return shopRepository
+                    .GetProducts(staff.ShopId)
+                    .FindAll(product => product.Category.Contains(GetProductCategory(productType)))
+                    .GetRange(from, to - from + 1)
+                    .ConvertAll(product => {
+                        ProductListItemOutput output = new ProductListItemOutput();
+                        output.Id = product.Id.ToString();
+                        output.Name = product.Name;
+                        output.Price = product.Price;
+                        output.Image = product.Images.Count != 0 ? product.Images.ElementAt(0).Image : "";
+                        output.Stock = product.Stock;
+                        return output;
+                    });
+            }
+            catch {
+                return new();
+            }
+        }
+
+        private string GetProductCategory(string engCategoryName) {
+            if (engCategoryName == "all") {
+                return "";
+            }
+            else if (engCategoryName == "chocolate-cookie") {
+                return "巧克力餅乾";
+            }
+            else if (engCategoryName == "butter-cookie") {
+                return "奶油餅乾";
+            }
+            else if (engCategoryName == "sandwitch-cookie") {
+                return "夾心餅乾";
+            }
+            else if (engCategoryName == "cookies") {
+                return "曲奇餅乾";
+            }
+            else if (engCategoryName == "soft-cookie") {
+                return "美式軟餅乾";
+            }
+            else if (engCategoryName == "roll-puff-pastry") {
+                return "捲心酥";
+            }
+            else if (engCategoryName == "egg-roll") {
+                return "蛋捲";
+            }
+            else if (engCategoryName == "other") {
+                return "其他";
+            }
+            throw new Exception("Category name is illegal");
+        }
     }
 }

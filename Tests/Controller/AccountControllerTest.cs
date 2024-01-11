@@ -253,7 +253,6 @@ namespace Tests.Controller {
 
             context.AccountController.FollowShop(input);
             Assert.AreEqual(1, context.CustomerRepository.FindById(Guid.Parse(customerId)).Shops.Count);
-            Assert.AreEqual(1, context.ShopRepository.FindById(Guid.Parse(shopId)).Customers.Count);
         }
 
         [TestMethod]

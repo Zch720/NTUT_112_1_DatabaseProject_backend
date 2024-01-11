@@ -8,6 +8,8 @@ namespace Elecookies.Entities {
         public Guid CustomerId { get; set; }
         public Guid ProductId { get; set; }
         public int Quantity { get; set; }
+        public Product Product { get; set; }
+        public ShoppingCart ShoppintCart { get; set; }
 
         public ShoppingCartHas(Guid customerId, Guid productId, int quantity) {
             CustomerId = customerId;

@@ -1,5 +1,6 @@
 using Elecookies.Database;
 using Elecookies.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Elecookies.Repositories {
     public class ProductRepository : Repository<Product, Guid> {
@@ -63,7 +64,15 @@ namespace Elecookies.Repositories {
 
 
         public Product? FindById(Guid id) {
-            return dbContext.Products.Find(id);
+            try {
+                return dbContext.Products
+                    .Where(p => p.Id == id)
+                    .Include(p => p.Shop)
+                    .Include(p => p.Images)
+                    .First();
+            } catch {
+                return null;
+            }
         }
 
         public ProductImage? FindImageById(Guid productId, int imageOrder) {

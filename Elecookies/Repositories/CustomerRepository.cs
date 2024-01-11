@@ -1,5 +1,6 @@
 ﻿using Elecookies.Database;
 using Elecookies.Entities;
+using Elecookies.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -89,12 +90,6 @@ namespace Elecookies.Repositories {
                 customer.Shops.Add(shop);
                 dbContext.Customers.Update(customer);
 
-                shop = dbContext.Shops.Include(s => s.Customers)
-                    .Single(s => s.Id == shopId);
-                customer = dbContext.Customers.Single(c => c.Id == customerId);
-                shop.Customers.Add(customer);
-                dbContext.Shops.Update(shop);
-
                 dbContext.SaveChanges();
             } catch {
                 Debug.WriteLine("error");
@@ -103,7 +98,9 @@ namespace Elecookies.Repositories {
 
         public void UnfollowShop(Guid customerId, Guid shopId) {
             try {
-                Customer customer = dbContext.Customers.OrderBy(c => c.Id == customerId).Include(c => c.Shops).First();
+                Customer customer = dbContext.Customers.Include(c => c.Shops).Single(c => c.Id == customerId);
+                Shop shop = customer.Shops.Single(s => s.Id == shopId);
+                customer.Shops.Remove(shop);
                 dbContext.SaveChanges();
             } catch {
                 Debug.WriteLine("error");

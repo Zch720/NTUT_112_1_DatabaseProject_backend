@@ -1,6 +1,7 @@
 ﻿using Elecookies.Entities;
 using Elecookies.ReadModels;
 using Elecookies.Repositories;
+using Elecookies.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Elecookies.Controllers {
@@ -290,6 +291,96 @@ namespace Elecookies.Controllers {
                 productDiscount.EndTime = input.EndTime;
                 productRepository.SaveDiscount(productDiscount);
             }
+        }
+
+        [Route("products/count")]
+        [HttpGet]
+        public int GetProductsCount(string productType) {
+            try {
+                return productRepository.All()
+                    .FindAll(p => p.Category.Contains(GetProductCategory(productType)))
+                    .Count;
+            } catch {
+                return 0;
+            }
+        }
+
+        [Route("products")]
+        [HttpGet]
+        public List<ProductListItemOutput> GetProducts(string productType, int from, int to) {
+            try {
+                return productRepository.All()
+                    .FindAll(p => p.Category.Contains(GetProductCategory(productType)))
+                    .GetRange(from, to - from + 1)
+                    .ConvertAll(p => {
+                        ProductListItemOutput output = new();
+                        output.Id = p.Id.ToString();
+                        output.Name = p.Name;
+                        output.Price = p.Price;
+                        output.Image = p.Images.Count != 0 ? p.Images.ElementAt(0).Image : "";
+                        return output;
+                    })
+                    .ToList();
+            } catch {
+                return new();
+            }
+        }
+
+        [Route("get")]
+        [HttpGet]
+        public ProductDataOutput? GetProduct(string productId) {
+            try {
+                Product? product = productRepository.FindById(Guid.Parse(productId));
+                if (product == null) return null;
+                ProductDataOutput output = new ProductDataOutput();
+                output.Images = product.Images
+                    .OrderBy(image => image.ImageOrder)
+                    .ToList()
+                    .ConvertAll(image => image.Image);
+                output.Name = product.Name;
+                output.Price = product.Price;
+                output.Stock = product.Stock;
+                output.Description = product.Description;
+                output.Category = product.Category;
+                output.ShopId = product.ShopId.ToString();
+                output.ShopName = product.Shop.Name;
+                output.ShopLogo = product.Shop.Icon;
+                output.ShopDescription = product.Shop.Description;
+                return output;
+            } catch {
+                return null;
+            }
+        }
+
+        private string GetProductCategory(string engCategoryName) {
+            if (engCategoryName == "all") {
+                return "";
+            }
+            else if (engCategoryName == "chocolate-cookie") {
+                return "巧克力餅乾";
+            }
+            else if (engCategoryName == "butter-cookie") {
+                return "奶油餅乾";
+            }
+            else if (engCategoryName == "sandwitch-cookie") {
+                return "夾心餅乾";
+            }
+            else if (engCategoryName == "cookies") {
+                return "曲奇餅乾";
+            }
+            else if (engCategoryName == "soft-cookie") {
+                return "美式軟餅乾";
+            }
+            else if (engCategoryName == "roll-puff-pastry") {
+                return "捲心酥";
+            }
+            else if (engCategoryName == "egg-roll") {
+                return "蛋捲";
+            }
+            else if (engCategoryName == "other") {
+                return "其他";
+            }
+            throw new Exception("Category name is illegal");
         }
     }
 }

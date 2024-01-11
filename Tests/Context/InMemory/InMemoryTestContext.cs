@@ -48,7 +48,7 @@ namespace Test.Context.InMemory {
             AccountController = new AccountController(AccountRepository, StaffRepository, CustomerRepository, ShopRepository, CouponRepository);
             ShopController = new ShopController(ShopRepository);
             ProductController = new ProductController(ProductRepository, StaffRepository, ShopRepository);
-            ShoppingCartController = new ShoppingCartController(ShoppingCartRepository, CustomerRepository, ProductRepository);
+            ShoppingCartController = new ShoppingCartController(ShoppingCartRepository, CustomerRepository, ProductRepository, ShopRepository);
             CouponController = new CouponController(CouponRepository, StaffRepository, ShopRepository);
             ShopOrderController = new ShopOrderController(ShopOrderRepository, CustomerRepository, ProductRepository, ShopRepository, CouponRepository);
         }

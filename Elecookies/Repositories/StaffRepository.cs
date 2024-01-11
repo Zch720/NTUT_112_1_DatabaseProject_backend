@@ -1,5 +1,6 @@
 ﻿using Elecookies.Database;
 using Elecookies.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Elecookies.Repositories {
     public class StaffRepository : Repository<Staff, Guid> {
@@ -29,7 +30,14 @@ namespace Elecookies.Repositories {
         }
 
         public Staff? FindById(Guid id) {
-            return dbContext.Staffs.Find(id);
+            try {
+                return dbContext.Staffs
+                    .Where(e => e.Id == id)
+                    .Include(e => e.Shop)
+                    .FirstOrDefault();
+            } catch {
+                return null;
+            }
         }
 
         public List<Staff> All() {

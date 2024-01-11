@@ -23,7 +23,7 @@ namespace Elecookies.Database {
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<Customer>()
                 .HasMany(e => e.Shops)
-                .WithMany(e => e.Customers)
+                .WithMany()
                 .UsingEntity<Follow>(
                     "Follows",
                     f => f.HasOne(e => e.Shop).WithMany().HasForeignKey(e => e.ShopId),
@@ -44,6 +44,23 @@ namespace Elecookies.Database {
                 .WithOne(e => e.Shop)
                 .HasForeignKey(e => e.ShopId)
                 .IsRequired();
+            modelBuilder.Entity<Shop>()
+                .HasMany(e => e.Staffs)
+                .WithOne(e => e.Shop)
+                .HasForeignKey(e => e.ShopId)
+                .IsRequired();
+            modelBuilder.Entity<Product>()
+                .HasOne(e => e.Shop)
+                .WithMany(e => e.Products);
+            modelBuilder.Entity<Product>()
+                .HasMany(e => e.Images)
+                .WithOne(e => e.Product);
+            modelBuilder.Entity<ShoppingCart>()
+                .HasMany(e => e.ShoppingCartHas)
+                .WithOne(e => e.ShoppintCart);
+            modelBuilder.Entity<Product>()
+                .HasMany(e => e.ShoppingCartHas)
+                .WithOne(e => e.Product);
         }
         #endregion
 

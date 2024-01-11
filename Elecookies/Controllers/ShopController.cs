@@ -39,54 +39,64 @@ namespace Elecookies.Controllers {
             return false;
         }
 
-        [Route("edit-name")]
-        [HttpPost]
+        [Route("modify/name")]
+        [HttpPut]
         public void EditShopName(EditShopNameInput input) {
             Shop? shop = shopRepository.FindById(Guid.Parse(input.Id));
-            if (shop != null) {
-                shop.Name = input.Name;
-                shopRepository.Save(shop);
-            }
+            if (shop == null) return;
+            if (shop.Staffs.FirstOrDefault(staff => staff.Id == Guid.Parse(input.StaffId)) == null) return;
+            shop.Name = input.Name;
+            shopRepository.Save(shop);
         }
 
-        [Route("edit-address")]
-        [HttpPost]
+        [Route("modify/address")]
+        [HttpPut]
         public void EditShopAddress(EditShopAddressInput input) {
             Shop? shop = shopRepository.FindById(Guid.Parse(input.Id));
-            if (shop != null) {
-                shop.Address = input.Address;
-                shopRepository.Save(shop);
-            }
+            if (shop == null) return;
+            if (shop.Staffs.FirstOrDefault(staff => staff.Id == Guid.Parse(input.StaffId)) == null) return;
+            shop.Address = input.Address;
+            shopRepository.Save(shop);
         }
 
-        [Route("edit-email")]
-        [HttpPost]
+        [Route("modify/email")]
+        [HttpPut]
         public void EditShopEmail(EditShopEmailInput input) {
             Shop? shop = shopRepository.FindById(Guid.Parse(input.Id));
-            if (shop != null) {
-                shop.Email = input.Email;
-                shopRepository.Save(shop);
-            }
+            if (shop == null) return;
+            if (shop.Staffs.FirstOrDefault(staff => staff.Id == Guid.Parse(input.StaffId)) == null) return;
+            shop.Email = input.Email;
+            shopRepository.Save(shop);
         }
 
-        [Route("edit-phone-number")]
-        [HttpPost]
+        [Route("modify/phone")]
+        [HttpPut]
         public void EditShopPhoneNumber(EditShopPhoneNumberInput input) {
             Shop? shop = shopRepository.FindById(Guid.Parse(input.Id));
-            if (shop != null) {
-                shop.PhoneNumber = input.PhoneNumber;
-                shopRepository.Save(shop);
-            }
+            if (shop == null) return;
+            if (shop.Staffs.FirstOrDefault(staff => staff.Id == Guid.Parse(input.StaffId)) == null) return;
+            shop.PhoneNumber = input.Phone;
+            shopRepository.Save(shop);
         }
 
-        [Route("edit-description")]
-        [HttpPost]
+        [Route("modify/description")]
+        [HttpPut]
         public void EditShopDescription(EditShopDescriptionInput input) {
             Shop? shop = shopRepository.FindById(Guid.Parse(input.Id));
-            if (shop != null) {
-                shop.Description = input.Description;
-                shopRepository.Save(shop);
-            }
+            if (shop == null) return;
+            if (shop.Staffs.FirstOrDefault(staff => staff.Id == Guid.Parse(input.StaffId)) == null) return;
+            shop.Description = input.Description;
+            shopRepository.Save(shop);
+        }
+
+        [Route("modify/icon")]
+        [HttpPut]
+        public void EditShopDescription(EditShopIconInput input) {
+            Shop? shop = shopRepository.FindById(Guid.Parse(input.Id));
+            if (shop == null) return;
+            if (shop.Staffs.FirstOrDefault(staff => staff.Id == Guid.Parse(input.StaffId)) == null) return;
+            shop.Icon = input.Icon;
+            shopRepository.Save(shop);
         }
 
         [Route("all-shop-count")]
@@ -116,7 +126,7 @@ namespace Elecookies.Controllers {
             Shop? shop = shopRepository.FindById(Guid.Parse(shopId));
             if (shop != null) {
                 output.Id = shop.Id.ToString();
-                output.Icon = "";
+                output.Icon = shop.Icon;
                 output.Name = shop.Name;
                 output.Address = shop.Address;
                 output.Description = shop.Description;
@@ -152,6 +162,7 @@ namespace Elecookies.Controllers {
                         output.Name = product.Name;
                         output.Price = product.Price;
                         output.Image = product.Images.Count != 0 ? product.Images.ElementAt(0).Image : "";
+                        output.Stock = product.Stock;
                         return output;
                     });
             } catch {
