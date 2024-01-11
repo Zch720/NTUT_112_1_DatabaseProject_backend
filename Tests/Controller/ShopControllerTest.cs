@@ -126,7 +126,7 @@ namespace Tests.Controller {
             string id = context.CreateNewShop();
             EditShopPhoneNumberInput input = new EditShopPhoneNumberInput();
             input.Id = id;
-            input.PhoneNumber = "newPhoneNumber";
+            input.Phone = "newPhoneNumber";
 
             context.ShopController.EditShopPhoneNumber(input);
 
